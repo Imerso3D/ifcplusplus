@@ -319,8 +319,9 @@ public:
 				product_geom_input_data->m_ifc_object_definition = ifc_object_def;
 
 				std::stringstream thread_err;
-				if( dynamic_pointer_cast<IfcFeatureElementSubtraction>(ifc_object_def) )
-				{
+
+                if (!m_geom_settings->getRenderObjectFilter()(ifc_object_def))
+                {
 					// geometry will be created in method subtractOpenings
 					continue;
 				}
@@ -441,8 +442,8 @@ public:
 					{
 						shared_ptr<IfcObjectDefinition> ifc_product( product_shape->m_ifc_object_definition );
 						shared_ptr<IfcFeatureElementSubtraction> opening = dynamic_pointer_cast<IfcFeatureElementSubtraction>(ifc_product);
-						if( opening )
-						{
+                        if (!m_geom_settings->getRenderObjectFilter()(ifc_product))
+                        {
 							continue;
 						}
 						m_map_outside_spatial_structure[ifc_product->m_entity_id] = ifc_product;
@@ -486,12 +487,12 @@ public:
 		{
 			return;
 		}
-		
+
 		if( !ifc_product->m_Representation )
 		{
 			return;
 		}
-		
+
 		double length_factor = 1.0;
 		if( m_ifc_model )
 		{
